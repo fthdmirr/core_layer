@@ -1,5 +1,5 @@
-import 'package:core_layer/core/enums/service_methods_enum.dart';
-import 'package:core_layer/core/enums/service_url_enum.dart';
+import 'package:core_layer/core/enums/service/service_methods_enum.dart';
+import 'package:core_layer/core/enums/service/service_url_enum.dart';
 import 'package:core_layer/core/extensions/service_extensions.dart';
 import 'package:core_layer/core/interfaces/IService.dart';
 import 'package:core_layer/core/models/base_model.dart';
@@ -11,6 +11,7 @@ class ServiceManager implements IService {
 //TODO: use more efficent generic type
 //TODO: find better variable names
 //TODO: rethink for can you do better version of this
+//TODO: fonksiyonları extensinolara veya mixinlere taşı
   static ServiceManager? _instance;
 
   static ServiceManager get instance {
@@ -33,12 +34,11 @@ class ServiceManager implements IService {
   @override
   Future<R>? getData<R, T extends BaseModel>(
       T model, ServiceHttpsEnum url) async {
-        
-    late R data; //!! that can be wrong
+    late R data; //!!
     try {
       final response = await http.get(url.getURL);
       if (response.statusCode == 200) {
-        data = await compute(parseData<R,T>, [model, response.body]);
+        data = await compute(parseData<R, T>, [model, response.body]);
       }
       return data;
     } catch (e) {
@@ -48,12 +48,14 @@ class ServiceManager implements IService {
 }
 
 R parseData<R, T extends BaseModel>(List data) {
-  final parsed = jsonDecode(data[1]);
+  final T _model = data[0];
+  final String _responseBody = data[1];
+  final parsed = jsonDecode(_responseBody);
 
   if (parsed is Map<String, dynamic>) {
-    return (data[0] as T).fromJson(parsed) as R;
+    return _model.fromJson(parsed) as R;
   } else if (parsed is List<dynamic>) {
-    return parsed.map((e) => (data[0] as T).fromJson(e)).toList().cast<T>() as R;
+    return parsed.map((e) => _model.fromJson(e)).toList().cast<T>() as R;
   } else {
     return parsed;
   }
