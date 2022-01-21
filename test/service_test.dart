@@ -8,13 +8,37 @@ void main() {
   setUp(() {
     Hive.init('Test');
   });
-  test('Is service layer working?', () async {
+  test('Is service layer get method working?', () async {
     final service = TestService();
 
     List<Post> posts = await service.getPosts();
 
     expect(posts, isNotEmpty);
   });
+     test('Is service layer post method working?', () async {
+    final service = TestService();
+
+   Post post = await service.postPost(Post(body: '',id: 6556,title: '',userId:586));
+
+    expect(post, isNotNull);
+  }); 
+
+    test('Is service layer update method working?', () async {
+    final service = TestService();
+
+   Post post = await service.updatePost(Post(body: '1',id: 6556,title: '2',userId:586));
+
+    expect(post, isNotNull);
+  });
+    test('Is service layer delete method working?', () async {
+    final service = TestService();
+
+     Post post = await service.deletePost(Post(body: '1',id: 6556,title: '2',userId:586));
+
+    expect(post, isNotNull);
+  });
+
+
   test('Is cache layer working?', () async {
     final service = TestService();
     final cache = TestCache(HiveCache('fthdmirr'));

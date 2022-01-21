@@ -1,6 +1,5 @@
 
 abstract class ICache<T> {
-  //TODO: init can be delete
   Future<void> initCache();
   Future<void> saveAllData(List<T> datas);
   T? getData(String key);
